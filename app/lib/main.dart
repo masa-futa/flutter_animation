@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 void main() {
   runApp(const MyApp());
@@ -65,21 +66,46 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: AnimatedBuilder(
-        animation: animation,
-        builder: (context, child) {
-          return SizedBox(
-            height: animation.value,
-            width: animation.value,
-            child: child,
-          );
-        },
-        child: Center(
-          child: Container(
-            color: Colors.black,
+      child: Column(
+        children: [
+          AnimatedBuilder(
+            animation: animation,
+            builder: (context, child) {
+              return SizedBox(
+                height: animation.value,
+                width: animation.value,
+                child: child,
+              );
+            },
+            child: Center(
+              child: Container(
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
+          _FlutterHooksWidget()
+        ],
       ),
     ));
+  }
+}
+
+class _FlutterHooksWidget extends HookWidget {
+  @override
+  Widget build(BuildContext context) {
+    final controller =
+        useAnimationController(duration: const Duration(seconds: 2));
+    final animation = Tween<double>(begin: 0, end: 300).animate(controller);
+    useEffect(() {
+      controller.forward();
+      return null;
+    }, []);
+    return Center(
+      child: Container(
+        height: animation.value,
+        width: animation.value,
+        color: Colors.orange,
+      ),
+    );
   }
 }
